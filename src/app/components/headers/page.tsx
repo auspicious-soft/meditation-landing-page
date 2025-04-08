@@ -61,11 +61,11 @@ const handleClick = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="flex flex-col gap-2 py-2 md:hidden ">
+        <div className="flex flex-col gap-2 py-5 md:hidden ">
           <Link href="#benefits"  className="text-zinc-800 font-small cursor-pointer">Benefits</Link>
           <Link href="#how-it-works"  className="text-zinc-800 font-small cursor-pointer">How It Works</Link>
           <Link href="#faq"  className="text-zinc-800 font-small cursor-pointer">FAQ</Link>
-          <button  onClick={handleClick}  className="px-6 py-3 bg-[#1A3F70] rounded-full text-white font-medium w-fit">
+          <button  onClick={handleClick}  className=" px-6 py-3  bg-[#1A3F70] rounded-full text-white font-medium w-fit">
             Login/Register
           </button>
         </div>
