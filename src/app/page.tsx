@@ -64,7 +64,6 @@ export default function Home() {
   }, []);
 
 
-  console.log('faqData: ', faqData);
 
   if (loading)
     return (
