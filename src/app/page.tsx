@@ -85,7 +85,7 @@ export default function Home() {
   return (
     <>
     <Headers/>
-    
+     
        {/* top  */}
        <div className="bg-white flex flex-col-reverse md:flex-row items-center justify-between px-4 sm:px-8 md:px-16 py-10">
         <div className="w-full md:w-1/2 text-center md:text-left">
