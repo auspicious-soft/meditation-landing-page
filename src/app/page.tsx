@@ -1,10 +1,12 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import Headers from "./components/headers/page";
 import Footers from "./components/footers/page";
+import { getAllFaq } from "./services/admin-services";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
 
 const benefits = [
     {
@@ -24,71 +26,60 @@ const benefits = [
     },
   ];
 
-  const faqData = [
-    {
-      question: "How does the company registration process work?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "How long does the approval process take?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "Can I add or remove employees later?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "How do employees access the meditation app?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "Is there a trial period for companies?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "What subscription plans are available?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "Can employees download meditation sessions for offline use?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "How do I notify employees about new meditation content?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "What if I need help managing my company’s account?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-    {
-      question: "How do I cancel my subscription?",
-      answer:
-        "To register, simply fill out the online form with your company details. Once submitted, our team will review and approve your registration. After approval, you can log in to the admin dashboard to manage employee access.",
-    },
-  ];
+
+  interface FaqItem  {
+    _id: string;
+    question: string;
+    answer: string;
+  }
+
 
 export default function Home() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [faqData, setFaqData] = useState<FaqItem[]>([]);
+
+    const [isOpen, setIsOpen] = useState(false);
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const toggleFAQ = (index: number) => {
       setOpenIndex(openIndex === index ? null : index);
     };
     const router = useRouter();
-  
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchFaq = async () => {
+    try {
+      const res = await getAllFaq() as { data: { data: any[] } };
+      setFaqData(res.data?.data);
+      setLoading(false)
+    } catch (err) {
+      console.error(err);
+      setLoading(false)
+
+    }
+  };
+  useEffect(() => {
+    setLoading(true)
+    fetchFaq();
+  }, []);
+
+
+  console.log('faqData: ', faqData);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-12 h-12 border-4 border-[#1A3F70] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  if (error) return <p>Error: {error}</p>;
+
+
 
     const handleClick = () => {
       window.location.href = 'https://panel.inscape.life/';
     };
+
 
 
   return (
@@ -110,10 +101,18 @@ export default function Home() {
     
     
     <div className=" relative w-full flex justify-center items-center ">
-       <Image 
+       {/* <Image 
         src="/images/mobiles.png" 
         height={428} width={211} alt="Stacked Mobile "
-        className="absolute h-[200px] sm:h-[280px] md:h-[428px] w-auto  object-contain" />
+        className="absolute h-[200px] sm:h-[280px] md:h-[428px] w-auto object-contain" /> */}
+        <Image 
+  src="/images/mobiles.png" 
+  height={428} 
+  width={211} 
+  alt="Stacked Mobile"
+  unoptimized
+  className="absolute h-[200px] sm:h-[280px] md:h-[428px] w-auto object-contain"
+/>
         <div className=" relative w-full h-[300px] sm:h-[350px] md:h-[450px] flex items-center justify-center"></div>
     
     </div>
@@ -289,10 +288,37 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+
+
+
+{/* <div>
+  <h1 className="text-2xl font-bold mb-6 text-white">FAQs</h1>
+
+  {error && <p className="text-red-500 mb-4">{error}</p>}
+
+  {faqData.map((faq, index) => (
+    <div key={faq._id}>
+      <div className="mb-[11px] flex justify-between items-center text-white text-base sm:text-lg md:text-xl font-semibold">
+        <div className="font-semibold">{faq.question}</div>
+        {openIndex === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </div>
+
+      <div className="mb-[25px] justify-start text-neutral-200 text-sm sm:text-base font-normal mt-[11px] max-w-full">
+        <p>{faq.answer}</p>
+      </div>
+
+      <div className="mt-[23px] mb-[25px] w-full border-t border-gray-500 opacity-50"></div>
+    </div>
+  ))}
+</div> */}
+
+
     
     </div>
-    
-    
+
+
+
     <div className=" mt-[50px] bg-[#FFFFFF]" >
     <div className=" h-15 bg-[#1A3F70]  [clip-path:polygon(0%_0%,_100%_0%,_100%_100%,_75%_80%,_50%_100%,_25%_80%,_0%_100%)]"></div>
     
@@ -317,3 +343,6 @@ export default function Home() {
       </>
   );
 }
+
+
+
